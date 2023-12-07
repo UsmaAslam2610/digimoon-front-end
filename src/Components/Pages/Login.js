@@ -1,30 +1,41 @@
-import React, {useState} from 'react';
+import React, {useState,useRef} from 'react';
 import Button from '@mui/material/Button';
-
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import InputAdornment from '@mui/material/InputAdornment';
 import Container from '@mui/material/Container';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined';
 import { Paper, Typography } from '@mui/material';
-// import { ThemeProvider, createTheme } from '@mui/material/styles';
+
 export default function Login() {
   
   const [email, setEmail] = useState('');
   const [isValid, setIsValid] = useState(true); 
   const [password, setPassword] = useState('');
-  const [isValidPass, setIsValidPass] = useState(true); 
+  const [isValidPass, setIsValidPass] = useState(true);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const [emailError, setEmailError] = useState(false);
+  const [emailHelperText, setEmailHelperText] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordHelperText, setPasswordHelperText] = useState('');
+
   
   const handlePasswordChange = (event) => {
     const inputPassword = event.target.value;
     setPassword(inputPassword);
     setIsValidPass(isValidPassword(inputPassword));
-  };
+    if(!isValidPass){
+      setPasswordError(true);
+      setPasswordHelperText('Password should have at least eight characters and contain 1 lowercase, 1 uppercase, 1 number, and 1 special character (!@#$%^&*).')
+    } else{
+      setPasswordError(false);
+      setPasswordHelperText('');
+    }};
 
   const isValidPassword = (password) => {
     const minLength = 8;
@@ -33,7 +44,7 @@ export default function Login() {
     const containsNumber = /[0-9]/;
     const containsSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
     return (
-      password.length >= minLength &&
+      (password.length >= minLength) &&
       containsUppercase.test(password) &&
       containsLowercase.test(password) &&
       containsNumber.test(password) &&
@@ -45,7 +56,14 @@ export default function Login() {
     const inputEmail = event.target.value;
     setEmail(inputEmail);
     setIsValid(isValidEmail(inputEmail)); 
-  };
+    if(!isValid){
+      setEmailError(true);
+      setEmailHelperText('Invalid Email');
+    } else{
+      setEmailError(false);
+      setEmailHelperText('');
+    }
+    };
 
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -55,9 +73,24 @@ export default function Login() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    if(!isValidEmail(data.get('email')) && !isValidPassword(data.get('password')))
+    {
+      setEmailError(true);
+      setEmailHelperText('Invalid Email');
+      setPasswordError(true);
+      setPasswordHelperText('Password should have at least eight characters and contain 1 lowercase, 1 uppercase, 1 number, and 1 special character (!@#$%^&*).'); 
+    }
+    if (!isValidEmail(data.get('email'))){
+      setEmailError(true);
+      setEmailHelperText('Invalid Email');
+   }
+   if (!isValidPassword(data.get('password'))) {
+        setPasswordError(true);
+        setPasswordHelperText('Password should have at least eight characters and contain 1 lowercase, 1 uppercase, 1 number, and 1 special character (!@#$%^&*).');  
+    }
     console.log({
       email: data.get('email'),
-      password: data.get('password'),
+      password: data.get('password')
     });
   };
   return (
@@ -65,7 +98,7 @@ export default function Login() {
       <Box
         sx={{
             marginTop: '2%',
-            marginBottom: '2%',
+            marginBottom: '1%',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -75,7 +108,6 @@ export default function Login() {
                 padding: '30px', 
             }} >
             <Container component="main" maxWidth="xs">
-              {/* <CssBaseline /> */}
               <Box
                 sx={{
                   marginTop: '5%',
@@ -85,64 +117,55 @@ export default function Login() {
                   alignItems: 'center',
                 }}
               >
-                <Typography component="h1" variant="h3" fontWeight={"bold"} style={{ color: '#5551ff'}} >
+                <Typography component="h1" variant="h3" fontWeight={"bold"} fontFamily={'Arial'} style={{ color: '#4b4af7'}} >
                   DigiMoon
                 </Typography>
-                <Typography component="h1" fontWeight={"light"} style={{ color: '#5551ff'}}  padding = {"20px"} >
+                <Typography component="h1" fontSize = {'15px'} fontWeight={"normal"} fontFamily={'Arial'} style={{ color: '#4b4af7'}}  padding = {"22px"} >
                   Login To Marketing Automation Platform
                 </Typography>
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                   <TextField
                     margin="normal"
-                    required
                     fullWidth
-                    id="email"
+                    id="emailid"
+                    ref = {emailRef}
                     name="email"
-                    label="Email"
                     fontWeight="light"
                     autoComplete="email"
-                    error={!isValid} 
-                    helperText={!isValid ? 'Invalid Email' : ''}
                     onChange={handleEmailChange}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <EmailOutlinedIcon />
-                        </InputAdornment>
-                      ),
-                    }}
+                    error={emailError} 
+                    helperText= {emailHelperText}
+                    label = {<span style={{display: "flex", justifyContent: "center"}}><EmailOutlinedIcon fontSize='small'/> <span style = {{paddingLeft:'5px',fontSize:'14px',fontFamily:'Arial' }} >Email</span></span>}
+                   
                   />
                   <TextField
                     margin="normal"
-                    required
                     fullWidth
                     name="password"
                     type="password"
-                    id="password"
-                    label="Password"
+                    id="passwordid"
+                    ref = {passwordRef}
                     variant='outlined'
                     fontWeight="light"
                     autoComplete="current-password"
-                    error={!isValidPass} 
-                    helperText={!isValidPass ? 'Password should has eight characters or longer. And it must contain 1 lowercase character, 1 uppercase character, 1 number, and at least one special character in this set (!@#$%^&*).' : ''}
                     onChange={handlePasswordChange}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <HttpsOutlinedIcon /> 
-                        </InputAdornment>
-                      ),
-                    }}
+                    error={passwordError} 
+                    helperText={passwordHelperText}
+                    label = {<span style={{display: "flex", justifyContent: "center"}}><HttpsOutlinedIcon fontSize='small'/> <span style = {{paddingLeft:'5px',fontSize:'14px',fontFamily:'Arial'  }}>Password</span></span>}
                   />
                   <Grid container>
                     <Grid item xs textAlign={"left"}>
                       <FormControlLabel 
-                      control={<Checkbox  value="remember" style={{ color: '#5551ff'}} size = "small"  />}
-                      label={<Typography variant="body1" style={{color: 'GrayText' }} fontSize={'14px'}>Remember me</Typography>}
+                      control={<Checkbox  
+                        value="remember" 
+                        style={{ color: '#4b4af7'}} 
+                        size = "small"  
+                        />}
+                      label={<Typography variant="body1" style={{color: 'GrayText' }} fontFamily={'Arial'} fontSize={'14px'}>Remember me</Typography>}
                     />
                     </Grid>
                     <Grid item xs  margin={"auto"} textAlign={"end"}>
-                      <Link href="#" variant="body2" underline="none" color = 'GrayText' >
+                      <Link href="#" variant="body2" underline="none" color = 'GrayText' fontFamily={'Arial'}>
                         Forgot password?
                       </Link>
                     </Grid>
@@ -152,13 +175,14 @@ export default function Login() {
                     fullWidth
                     variant="contained"
                     text-color='white'
-                    style={{ backgroundColor: '#5551ff'}}
+                    style={{ backgroundColor: '#4b4af7'}}
                     sx={{ mt: 3, mb: 2 }}
+                    fontFamily={'Arial'}
                   >
-                      Get Started
+                      <b>Get Started</b>
                   </Button>
-                  <Link href="#" variant="body2" underline='none' color= 'GrayText'>
-                      <p>Didn't have an account <b>Sign Up</b></p>
+                  <Link href="#" variant="body2" underline='none' color= 'GrayText' fontFamily={'Arial'}>
+                      <p>Didn't have an account <b>Signup</b></p>
                   </Link>
                 </Box>
               </Box>
