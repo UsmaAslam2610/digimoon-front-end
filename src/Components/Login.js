@@ -37,21 +37,25 @@ export default function Login() {
       setPasswordHelperText('');
     }};
 
-  const isValidPassword = (password) => {
+  const isValidPassword = (password ) => {
     const minLength = 8;
-    const containsUppercase = /[A-Z]/;
-    const containsLowercase = /[a-z]/;
-    const containsNumber = /[0-9]/;
-    const containsSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
-    return (
-      (password.length >= minLength) &&
-      containsUppercase.test(password) &&
-      containsLowercase.test(password) &&
-      containsNumber.test(password) &&
-      containsSpecialChar.test(password)
-    );
+    const containsUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const containsLowercase = "abcdefghijklmnopqrstuvwxyz";
+    const containsNumber = "0123456789";
+    const containsSpecialChar = [" ", "!", "@","#","$","%","^","&","*","(",")","{","}","[","]","_","-","+","=","|","\\'","/",";", "<",">","?","~","`", ","]
+    let upperFlag = false, lowerFlag = false, numberFlag = false, specialCharFlag = false;
+    Array.from(password).forEach((element) =>{ 
+      if(containsSpecialChar.indexOf(element) !== -1)
+        specialCharFlag = true;
+      else if(containsUppercase.indexOf(element) !== -1)
+         upperFlag = true;
+      else if(containsLowercase.indexOf(element) !== -1)
+         lowerFlag = true;
+      else if(containsNumber.indexOf(element) !== -1)
+         numberFlag = true;
+    });
+    return (password.length >= minLength && numberFlag && lowerFlag && upperFlag && specialCharFlag );
   };
-
   const handleEmailChange = (event) => {
     const inputEmail = event.target.value;
     setEmail(inputEmail);
@@ -66,10 +70,13 @@ export default function Login() {
     };
 
   const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    const atChar  = email.indexOf('@');
+    const dotChar  = email.lastIndexOf('.');
+    if(atChar > 0 && dotChar > 0 && dotChar>atChar+1 && dotChar < email.length - 1)
+     return true;
+    else 
+      return false;
   };
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -80,13 +87,19 @@ export default function Login() {
       setPasswordError(true);
       setPasswordHelperText('Password should have at least eight characters and contain 1 lowercase, 1 uppercase, 1 number, and 1 special character (!@#$%^&*).'); 
     }
-    if (!isValidEmail(data.get('email'))){
+    else if (!isValidEmail(data.get('email'))){
       setEmailError(true);
       setEmailHelperText('Invalid Email');
    }
-   if (!isValidPassword(data.get('password'))) {
+   else if (!isValidPassword(data.get('password'))) {
         setPasswordError(true);
         setPasswordHelperText('Password should have at least eight characters and contain 1 lowercase, 1 uppercase, 1 number, and 1 special character (!@#$%^&*).');  
+    }
+    else {
+      setEmailError(false);
+      setEmailHelperText('');
+      setPasswordError(false);
+      setPasswordHelperText(''); 
     }
     console.log({
       email: data.get('email'),
@@ -135,8 +148,7 @@ export default function Login() {
                     onChange={handleEmailChange}
                     error={emailError} 
                     helperText= {emailHelperText}
-                    label = {<span style={{display: "flex", justifyContent: "center"}}><EmailOutlinedIcon fontSize='small'/> <span style = {{paddingLeft:'5px',fontSize:'14px',fontFamily:'Arial' }} >Email</span></span>}
-                   
+                    label = {<span style={{display: "flex", justifyContent: "center"}}><EmailOutlinedIcon fontSize='small'/> <span style = {{paddingLeft:'5px',fontSize:'14px',fontFamily:'Arial' }} >Email</span></span>}                  
                   />
                   <TextField
                     margin="normal"
@@ -188,7 +200,7 @@ export default function Login() {
               </Box>
             </Container>
           </Paper>
-        </Box>
+      </Box>
     </div>
   );
 }
