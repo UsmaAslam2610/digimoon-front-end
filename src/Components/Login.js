@@ -12,17 +12,18 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined';
 import { Paper, Typography } from '@mui/material';
 
-import { isValidPassword, isValidEmail } from '../Utils/index';
+import { ValidPassword, ValidEmail } from '../Utils/index';
 
 export default function Login() {
-  const [isValid, setIsValid] = useState(true);
-  const [isValidPass, setIsValidPass] = useState(true);
+  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [isValidPassword, setIsValidPassword] = useState(true);
   const [emailHelperText, setEmailHelperText] = useState('');
   const [passwordHelperText, setPasswordHelperText] = useState('');
+  
   const handlePasswordChange = (event) => {
     const inputPassword = event.target.value;
-    setIsValidPass(isValidPassword(inputPassword));
-    if (!isValidPass) {
+    setIsValidPassword(ValidPassword(inputPassword));
+    if (!isValidPassword) {
       setPasswordHelperText('Password should have at least eight characters and contain 1 lowercase, 1 uppercase, 1 number, and 1 special character (!@#$%^&*).')
     } else {
       setPasswordHelperText('');
@@ -30,8 +31,8 @@ export default function Login() {
   };
   const handleEmailChange = (event) => {
     const inputEmail = event.target.value;
-    setIsValid(isValidEmail(inputEmail));
-    if (!isValid) {
+    setIsValidEmail(ValidEmail(inputEmail));
+    if (!isValidEmail) {
       setEmailHelperText('Invalid Email');
     } else {
       setEmailHelperText('');
@@ -40,14 +41,14 @@ export default function Login() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if (!isValidEmail(data.get('email')) && !isValidPassword(data.get('password'))) {
+    if (!ValidEmail(data.get('email')) && !ValidPassword(data.get('password'))) {
       setEmailHelperText('Invalid Email');
       setPasswordHelperText('Password should have at least eight characters and contain 1 lowercase, 1 uppercase, 1 number, and 1 special character (!@#$%^&*).');
     }
-    else if (!isValidEmail(data.get('email'))) {
+    else if (!ValidEmail(data.get('email'))) {
       setEmailHelperText('Invalid Email');
     }
-    else if (!isValidPassword(data.get('password'))) {
+    else if (!ValidPassword(data.get('password'))) {
       setPasswordHelperText('Password should have at least eight characters and contain 1 lowercase, 1 uppercase, 1 number, and 1 special character (!@#$%^&*).');
     }
     else {

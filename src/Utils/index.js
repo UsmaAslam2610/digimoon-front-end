@@ -1,5 +1,5 @@
 //entry point 
-export const isValidPassword = (password) => {
+export const ValidPassword = (password) => {
     const minLength = 8;
     const containsUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const containsLowercase = "abcdefghijklmnopqrstuvwxyz";
@@ -19,7 +19,7 @@ export const isValidPassword = (password) => {
     return (password.length >= minLength && numberFlag && lowerFlag && upperFlag && specialCharFlag);
 };
 
-export const isValidEmail = (email) => {
+export const ValidEmail = (email) => {
     const atChar = email.indexOf('@');
     const dotChar = email.lastIndexOf('.');
     if (atChar > 0 && dotChar > 0 && dotChar > atChar + 1 && dotChar < email.length - 1)
