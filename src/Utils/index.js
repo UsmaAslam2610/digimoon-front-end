@@ -4,7 +4,7 @@ export const ValidPassword = (password) => {
     const containsUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const containsLowercase = "abcdefghijklmnopqrstuvwxyz";
     const containsNumber = "0123456789";
-    const containsSpecialChar = [" ", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "{", "}", "[", "]", "_", "-", "+", "=", "|", "\\'", "/", ";", "<", ">", "?", "~", "`", ","]
+    const containsSpecialChar = [" ",".", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "{", "}", "[", "]", "_", "-", "+", "=", "|", "\\'", "/", ";", "<", ">", "?", "~", "`", ","]
     let upperFlag = false, lowerFlag = false, numberFlag = false, specialCharFlag = false;
     Array.from(password).forEach((element) => {
         if (containsSpecialChar.indexOf(element) !== -1)

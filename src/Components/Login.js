@@ -15,45 +15,35 @@ import { Paper, Typography } from '@mui/material';
 import { ValidPassword, ValidEmail } from '../Utils/index';
 
 export default function Login() {
-  const [isValidEmail, setIsValidEmail] = useState(true);
-  const [isValidPassword, setIsValidPassword] = useState(true);
   const [emailHelperText, setEmailHelperText] = useState('');
   const [passwordHelperText, setPasswordHelperText] = useState('');
-  
+
   const handlePasswordChange = (event) => {
     const inputPassword = event.target.value;
-    setIsValidPassword(ValidPassword(inputPassword));
-    if (!isValidPassword) {
+    setPasswordHelperText('');
+    if (!ValidPassword(inputPassword)) {
       setPasswordHelperText('Password should have at least eight characters and contain 1 lowercase, 1 uppercase, 1 number, and 1 special character (!@#$%^&*).')
-    } else {
-      setPasswordHelperText('');
+      return;
     }
   };
   const handleEmailChange = (event) => {
     const inputEmail = event.target.value;
-    setIsValidEmail(ValidEmail(inputEmail));
-    if (!isValidEmail) {
+    if (!ValidEmail(inputEmail)) {
       setEmailHelperText('Invalid Email');
-    } else {
-      setEmailHelperText('');
+      return;
     }
+    setEmailHelperText('');
   };
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if (!ValidEmail(data.get('email')) && !ValidPassword(data.get('password'))) {
-      setEmailHelperText('Invalid Email');
-      setPasswordHelperText('Password should have at least eight characters and contain 1 lowercase, 1 uppercase, 1 number, and 1 special character (!@#$%^&*).');
-    }
-    else if (!ValidEmail(data.get('email'))) {
+    setEmailHelperText('');
+    setPasswordHelperText('');
+    if (!ValidEmail(data.get('email'))) {
       setEmailHelperText('Invalid Email');
     }
-    else if (!ValidPassword(data.get('password'))) {
+    if (!ValidPassword(data.get('password'))) {
       setPasswordHelperText('Password should have at least eight characters and contain 1 lowercase, 1 uppercase, 1 number, and 1 special character (!@#$%^&*).');
-    }
-    else {
-      setEmailHelperText('');
-      setPasswordHelperText('');
     }
   };
   return (
